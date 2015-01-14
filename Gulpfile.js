@@ -14,6 +14,7 @@ var config = {
     baseDir : './public',
     index : 'index.html'
   },
+  browser: "google chrome",
   injectChanges : true,
   files : ['public/js/*.js', 'public/styles/*.css']
 };
@@ -91,9 +92,20 @@ gulp.task('customer-templates', function () {
   })).pipe(gulp.dest('./build'));
 });
 
+gulp.task('fuelux-templates', function () {
+  return gulp.src([
+    './client/features/fuelux/*.html'
+  ]).pipe(templateCache({
+    module: 'app.fuelux',
+    root: 'fuelux/',
+    filename: 'app-fuelux-templates.js'
+  })).pipe(gulp.dest('./build'));
+});
+
 gulp.task('build', function (cb) {
   runSequence([
     'home-templates',
+    'fuelux-templates',
     'customer-templates'
   ], 'app', cb);
 });

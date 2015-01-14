@@ -8,6 +8,7 @@
 
     'app.infrastructure',
     'app.home',
-    'app.customer']);
+    'app.customer',
+    'app.fuelux']);
 
 }());
