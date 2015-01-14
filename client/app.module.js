@@ -7,8 +7,6 @@
     'ngCookies',
 
     'app.infrastructure',
-    'app.home',
-    'app.customer',
-    'app.fuelux']);
+    'app.home']);
 
 }());

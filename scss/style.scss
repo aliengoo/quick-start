@@ -6,6 +6,10 @@ input {
   }
 }
 
+select {
+  width : $defaultInputTextSize * 1.5 !important;
+}
+
 h2 {
-  color : blue;
+
 }
