@@ -6,6 +6,7 @@
     'ngResource',
     'ngCookies',
 
+    'app.infrastructure',
     'app.home',
     'app.customer']);
 

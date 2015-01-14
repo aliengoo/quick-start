@@ -1,0 +1,11 @@
+$defaultInputTextSize : 200px;
+
+input {
+  &[type=text] {
+    width: $defaultInputTextSize;
+  }
+}
+
+h2 {
+  color : blue;
+}

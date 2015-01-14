@@ -8,5 +8,5 @@ Get up and running quickly with a AngularJS application.
 - Run `bower install`
 - Run `npm install`
 - Run `gulp`
-- Run `python -m SimpleHTTPServer`
-- Browse to `http://localhost:8000/public`
+
+The application uses browser-sync to start the browser, and monitor for changes.  CSS changes are injected, rather than forcing a reload - sweet.

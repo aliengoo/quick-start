@@ -5,8 +5,18 @@ var gulp = require('gulp'),
   templateCache = require('gulp-angular-templatecache'),
   sass = require('gulp-sass'),
   clean = require('gulp-clean'),
-  livereload = require('gulp-livereload'),
+  browserSync = require('browser-sync'),
+  reload = browserSync.reload,
   runSequence = require('run-sequence');
+
+var config = {
+  server : {
+    baseDir : './public',
+    index : 'index.html'
+  },
+  injectChanges : true,
+  files : ['public/js/*.js', 'public/styles/*.css']
+};
 
 var vendorSrcFiles = [
   'bower/jquery/dist/jquery.min.js',
@@ -49,8 +59,10 @@ var cssFiles = [
 ];
 
 var appSrcFiles = [
-  'client/**/*.module.js',
-  'client/**/**/*.module.js',
+  'client/infrastructure/**/*.module.js',
+  'client/infrastructure/**/**/*.module.js',
+  'client/features/**/*.module.js',
+  'client/features/**/**/*.module.js',
   'client/app.module.js',
   'client/*.js',
   'client/**/*.js',
@@ -107,15 +119,15 @@ gulp.task('vendor-sourcemaps', function () {
 gulp.task('app', function () {
   gulp.src(appSrcFiles)
     .pipe(concat('client.js', {newline: ';'}))
-    .pipe(gulp.dest('./public/js'))
-    .pipe(livereload());
+    .pipe(gulp.dest('./public/js'));
 });
 
 gulp.task('sass', function () {
   gulp.src('./scss/*.scss')
-    .pipe(sass())
-    .pipe(gulp.dest('./public/styles')
-      .pipe(livereload()))
+    .pipe(sass({
+      errLogToConsole: true
+    }))
+    .pipe(gulp.dest('./public/styles'));
 });
 
 gulp.task('vendor-css', function () {
@@ -133,16 +145,20 @@ gulp.task('move-fonts', function () {
   ]).pipe(gulp.dest('./public/fonts'));
 });
 
-gulp.task('watch', function () {
-  livereload.listen();
-  gulp.watch(['./client/features/**/*.html'], ['build-templates']);
-  gulp.watch(appSrcFiles, ['build']);
+gulp.task('browser-sync', function () {
+  browserSync(config);
 });
 
 gulp.task('default', [
-  'move-fonts',
-  'vendor-css',
-  'vendor-scripts',
-  'vendor-sourcemaps',
-  'build',
-  'watch']);
+    'move-fonts',
+    'vendor-css',
+    'vendor-scripts',
+    'vendor-sourcemaps',
+    'sass',
+    'build',
+  'browser-sync'],
+  function () {
+    gulp.watch(['./scss/*.scss'], ['sass'])
+    gulp.watch(['./client/features/**/*.html'], ['build-templates']);
+    gulp.watch(appSrcFiles, ['build']);
+  });
