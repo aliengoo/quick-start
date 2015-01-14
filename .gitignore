@@ -1,5 +1,7 @@
 bower
 node_modules
 build
-public
+public/js
+public/styles
+public/fonts
 .idea
