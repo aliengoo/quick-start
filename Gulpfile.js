@@ -5,6 +5,7 @@ var gulp = require('gulp'),
   templateCache = require('gulp-angular-templatecache'),
   sass = require('gulp-sass'),
   clean = require('gulp-clean'),
+  livereload = require('gulp-livereload'),
   runSequence = require('run-sequence');
 
 var vendorSrcFiles = [
@@ -27,6 +28,13 @@ var vendorSrcFiles = [
   'bower/toastr/toastr.min.js'
 ];
 
+var vendorSrcMaps = [
+  'bower/angular/angular.min.js.map',
+  'bower/angular-cookies/angular-cookies.min.js.map',
+  'bower/angular-resource/angular-resource.min.js.map',
+  'bower/chartist/dist/chartist.min.js.map'
+];
+
 var cssFiles = [
   'bower/bootstrap/dist/css/bootstrap.min.css',
   'bower/angular-loading-bar/build/loading-bar.min.css',
@@ -47,44 +55,42 @@ var appSrcFiles = [
   'client/*.js',
   'client/**/*.js',
   'client/**/**/*.js',
-  'client/**/**/**/*.js'
+  'client/**/**/**/*.js',
+  'build/*.js'
 ];
 
-var appTemplates = [
-  'client/**/*.html',
-  'client/**/**/*.html'
-];
-
-gulp.task('build-clean', function(){
-  return gulp.src('./build').pipe(clean());
-});
-
-gulp.task('app.home.templates', function () {
+gulp.task('home-templates', function () {
   return gulp.src([
     './client/features/home/*.html'
   ]).pipe(templateCache({
-    module : 'app.home',
-    fileName : 'app-customer-templates.js'
+    module: 'app.home',
+    root: 'home/',
+    filename: 'app-home-templates.js'
   })).pipe(gulp.dest('./build'));
 });
 
-gulp.task('app.customer.templates', function () {
+gulp.task('customer-templates', function () {
   return gulp.src([
     './client/features/customer/*.html'
   ]).pipe(templateCache({
-    module : 'app.customer',
-    fileName : 'app-customer-templates.js'
+    module: 'app.customer',
+    root: 'customer/',
+    filename: 'app-customer-templates.js'
   })).pipe(gulp.dest('./build'));
 });
 
-gulp.task('concat-templates', function () {
-  return gulp.src(['.build/*.js'])
-    .pipe(concat('templates.js', {newline: ';'}))
-    .pipe(gulp.dest('./public/js'));
+gulp.task('build', function (cb) {
+  runSequence([
+    'home-templates',
+    'customer-templates'
+  ], 'app', cb);
 });
 
-gulp.task('build-templates', function(cb) {
-  runSequence('build-clean', ['app.home.templates', 'app.customer.templates'], 'concat-templates', cb);
+gulp.task('build-templates', function (cb) {
+  runSequence([
+    'home-templates',
+    'customer-templates'
+  ], cb);
 });
 
 gulp.task('vendor-scripts', function () {
@@ -93,16 +99,23 @@ gulp.task('vendor-scripts', function () {
     .pipe(gulp.dest('./public/js'));
 });
 
-gulp.task('app-scripts', function () {
+gulp.task('vendor-sourcemaps', function () {
+  gulp.src(vendorSrcMaps)
+    .pipe(gulp.dest('./public/js'));
+});
+
+gulp.task('app', function () {
   gulp.src(appSrcFiles)
     .pipe(concat('client.js', {newline: ';'}))
-    .pipe(gulp.dest('./public/js'));
+    .pipe(gulp.dest('./public/js'))
+    .pipe(livereload());
 });
 
 gulp.task('sass', function () {
   gulp.src('./scss/*.scss')
     .pipe(sass())
-    .pipe(gulp.dest('./public/styles'))
+    .pipe(gulp.dest('./public/styles')
+      .pipe(livereload()))
 });
 
 gulp.task('vendor-css', function () {
@@ -117,13 +130,19 @@ gulp.task('move-fonts', function () {
     'bower/bootstrap/dist/fonts/**',
     'bower/fontawesome/fonts/**',
     'bower/fuelux/dist/fonts/**'
-  ])
-    .pipe(gulp.dest('./public/fonts'));
+  ]).pipe(gulp.dest('./public/fonts'));
 });
 
 gulp.task('watch', function () {
+  livereload.listen();
   gulp.watch(['./client/features/**/*.html'], ['build-templates']);
-  gulp.watch(appSrcFiles, ['app-scripts']);
+  gulp.watch(appSrcFiles, ['build']);
 });
 
-gulp.task('default', ['vendor-scripts', 'app-scripts', 'vendor-css', 'build-templates', 'move-fonts', 'watch']);
+gulp.task('default', [
+  'move-fonts',
+  'vendor-css',
+  'vendor-scripts',
+  'vendor-sourcemaps',
+  'build',
+  'watch']);

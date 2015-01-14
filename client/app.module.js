@@ -4,6 +4,9 @@
   angular.module('app', [
     'ui.router',
     'ngResource',
-    'ngCookies']);
+    'ngCookies',
+
+    'app.home',
+    'app.customer']);
 
 }());

@@ -9,7 +9,7 @@
     $stateProvider.state('customer', {
       url : '/customer',
       controller : 'Customer as customer',
-      templateUrl : 'features/customer/customer.html'
+      templateUrl : 'customer/customer.html'
     });
   }
 
