@@ -34,9 +34,7 @@ var vendorSrcFiles = [
   'bower/numeral/min/numeral.min.js',
   'bower/stringjs/lib/string.min.js',
   'bower/sweetalert/lib/sweet-alert.min.js',
-  'bower/toastr/toastr.min.js',
-  'bower/firebase/firebase-debug.js',
-  'bower/angularfire/dist/angula'
+  'bower/toastr/toastr.min.js'
 ];
 
 var vendorSrcMaps = [
